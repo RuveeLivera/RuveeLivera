@@ -1,5 +1,31 @@
-<div align="center">
+name: Generate Snake
 
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&pause=1000&color=9B7EDE&center=true&vCenter=true&width=650&lines=Hi%2C+I'm+Ruvee+Livera+%F0%9F%91%8B;Data+Science+%26+AI+Undergraduate;Exploring+Artificial+Intelligence;Turning+Ideas+Into+Reality" />
+on:
+  schedule:
+    - cron: "0 */12 * * *"   # every 12 hours
+  workflow_dispatch:          # lets you run it manually
+  push:
+    branches:
+      - main
 
-</div>
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: Platane/snk@v3
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          outputs: |
+            dist/github-snake.svg?palette=github-light&color_snake=ff6ec7
+            dist/github-snake-dark.svg?palette=github-dark&color_snake=ff6ec7&color_dots=2d1b4e,7b2cbf,9b5de5,c77dff,ff6ec7
+
+      - uses: crazy-max/ghaction-github-pages@v3.1.0
+        with:
+          target_branch: output
+          build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
